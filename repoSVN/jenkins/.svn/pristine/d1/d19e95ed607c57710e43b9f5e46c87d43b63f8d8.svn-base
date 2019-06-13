@@ -1,0 +1,114 @@
+def GlobalConfig
+pipeline {
+    agent any
+
+    post {
+        success {
+            mail(to:"alejandro.maillard@getronics.com",
+                    subject: "[${env.ENTORNO}] Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) ejecutado",
+                    body: "El Job ha finalizado: ${env.BUILD_URL}. Referencia: ${config?.REF}\n  Sonar: ${env.SONARURL}")
+        }
+        failure {
+            mail(to:"alejandro.maillard@getronics.com",
+                    subject: "[${env.ENTORNO}] Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) ejecutado con errores",
+                    body: "El Job ha finalizado con errores: ${env.BUILD_URL}. Referencia: ${config?.REF}\n ")
+        }
+        unstable {
+            mail(to:"alejandro.maillard@getronics.com",
+                    subject: "[${env.ENTORNO}] Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) inestable",
+                    body: "El Job ha finalizado: ${env.BUILD_URL}. Referencia: ${config?.REF}\n  Sonar: ${env.SONARURL}")
+        }
+    }
+
+    stages {
+        stage('Validate Config') {
+            steps {
+                script {
+                    try {
+                        //Lectura del fichero de configuracion, asociado por nombre de la tarea
+
+                        echo "Cargando fichero de configuracion del job: " + env.JOB_NAME
+                        //Lectura del fichero de configuracion, asociado por nombre de la tarea
+                        //resources/config/TAREAJENKINS.json
+                        def config = readJSON file:'config/'+ env.JOB_NAME + '.json'
+                        //def config = readJSON text: libraryResource "config/" + env.JOB_NAME + ".json"
+                        echo "Configuracion leida"
+                        //asignacion de parametros por defecto
+                        config.type = utilHelper.defaultIfNull(config.type, 'MAVEN')
+                        config.mailNotification = utilHelper.defaultIfNull(config.mailNotification, '')
+                        config.pipelineVersion = utilHelper.defaultIfNull(config.pipelineVersion, 99999)
+
+                        echo "Configuracion cargada"
+                    } catch (Exception e) {
+                        echo e.toString()
+                        throw e
+                    }
+
+                    //Comprobar que el Job contiene los parametros necesarios
+                    echo "Comprobando parametros del Job"
+                    //Parametros para todos los tipos
+                    def parametersList = [choice(choices: 'NO\nSI', description: 'Especifica si se ejecutara Sonar o no', name: 'SONAR')]
+                    echo "Cargando configuracion del JOB especifica para proyectos " + config.type
+
+                    //parametros especificos de los tipos MAVEN 
+                    parametersList.add(choice(choices: 'NO\nSI', description: 'Especifica si se eliminara el WS completamente antes de empezar la tarea', name: 'CLEAN_WS'))
+                    def propertiesList = [buildDiscarder(logRotator(artifactDaysToKeepStr: '20', artifactNumToKeepStr: '6', daysToKeepStr: '', numToKeepStr: '')),
+                                          disableConcurrentBuilds(),
+                                          parameters(parametersList),
+                                          ]
+                    println " "
+                    println "CONFIGURACION DE LA EJECUCION: "
+                    println prettyPrint(toJson(config))
+                    println " "
+                    properties(propertiesList)
+
+                    //Comprobacion de parametros especificos
+                    if (!config.SONAR) {
+                        error "Faltan parametros, puede ser debido a una actualizacion del Job, por favor ejecute de nuevo el Job."
+                    }
+                    break
+                    config.each { k, v -> sasHelper.setParam(k, v) }
+
+                    try {
+                        utilHelper.retry({
+                            mail(to: "alejandro.maillard@getronics.com",
+                                    subject: "[${env.ENTORNO}] Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) iniciado",
+                                    body: "El Job se ha iniciado: ${env.BUILD_URL}.")
+                        })
+                    } catch (Exception e) {
+                        echo e.toString()
+                    }
+                }
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+
+                utilCheckout(config)
+
+            }
+        }
+
+        stage('Build') {
+            steps {
+                 utilBuild(config)
+            }
+        }
+        stage('Testing') {
+            steps {
+                utilTest(config)
+            }
+
+        }
+        stage('Code Quality') {
+            when {
+                expression { config.SONAR == 'SI' }
+            }
+            steps {
+                utilCodeQuality(config)
+            }
+        }
+
+    }
+}

@@ -1,0 +1,10 @@
+{
+  "pipelineVersion": 1,
+  "stage": {
+    "build":
+        {
+            "jdk": "1.8", 
+            "filePath": "pom.xml" 
+        }
+  }
+}

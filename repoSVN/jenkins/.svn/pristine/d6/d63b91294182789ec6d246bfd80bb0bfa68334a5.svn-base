@@ -1,0 +1,15 @@
+{
+  "pipelineVersion": 1,
+  "type":"MAVEN",
+  "stage": {
+    "build":
+        {
+            "jdk": "1.8", 
+            "filePath": "pom.xml" 
+        },
+    "testing": 
+        {
+          "codeCoverage": "JACOCO"
+        }
+  }
+}

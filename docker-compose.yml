@@ -7,10 +7,11 @@ networks:
 volumes:
   nexus-data:
   jenkins-data:
+  subversion-data:
 
 services:
   nexus:
-    build: ./docker-nexus3
+    build: ./nexus
     restart: always
     ports:
       - "18081:8081"
@@ -22,7 +23,7 @@ services:
     build: ./jenkins
     restart: always
     ports:
-      - "18080:8080"
+      - "18082:8080"
     networks:
       - prodnetwork
     volumes:
@@ -60,6 +61,19 @@ services:
      - SONARQUBE_JDBC_URL=jdbc:postgresql://sonardb:5432/sonar
      - SONARQUBE_JDBC_USERNAME=sonar
      - SONARQUBE_JDBC_PASSWORD=sonar
+
+  subversion:
+    build: ./subversion-edge
+    restart: always
+    hostname: subversion
+    ports:
+      - "3343:3343"
+      - "4434:4434"
+      - "18080:18080"
+    volumes:
+      - subversion-data:/opt/csvn/data
+    networks:
+      - prodnetwork
 
 ##########################################################################################
 # DISABLED: GitLab takes too much memory and CPU. Demo uses GitHub repositories instead.
