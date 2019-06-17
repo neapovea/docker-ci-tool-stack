@@ -124,12 +124,18 @@ docker-compose -f docker-compose-selenium.yml up
 
 | *Tool* | *Link* | *Credentials* |
 | ------------- | ------------- | ------------- |
-| Jenkins | http://${docker-machine ip default}:18080/ | no login required |
+| Jenkins | http://${docker-machine ip default}:18082/ | no login required |
 | SonarQube | http://${docker-machine ip default}:19000/ | admin/admin |
 | Nexus | http://${docker-machine ip default}:18081/nexus | admin/admin123 |
 | GitLab | http://${docker-machine ip default}/ | root/5iveL!fe |
 | Selenium Grid | http://${docker-machine ip default}:4444/grid/console | no login required |
 | Conference App | http://${docker-machine ip default}:48080/currentSessions | no login required |
+| Subversion | http://${docker-machine ip default}:18080/currentSessions | no login required |
+http://172.19.0.3:3343/csvn/login/auth
+
+http://172.19.0.3:18080/svn/jenkins
+
+172.19.0.4
 
 #### With Docker Mac Native
 
