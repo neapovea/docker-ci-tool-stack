@@ -70,7 +70,7 @@ plain-credentials:1.5
 resource-disposer:0.12
 ruby-runtime:0.12
 run-condition:1.2
-scm-api:2.4.1
+scm-api:2.5.0
 script-security:1.60
 sonar:2.9
 ssh-credentials:1.17
