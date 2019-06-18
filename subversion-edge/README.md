@@ -32,3 +32,26 @@ If you want to provide a host path for the data use command like this:
     
 
 For information to further configuration please consult the documentation at [CollabNet](http://collab.net/products/subversion).
+
+
+
+Sample to Load test subversion repo
+
+Let's load a test SVN repository, located here.
+
+    Dump SVN repo to local Docker container
+
+    $ docker exec -it svn-server sh -c "svnrdump dump https://svn.code.sf.net/p/ultrastardx/svn | gzip > /tmp/ultrastardx.dump.gz"
+
+    Create new repo to host code
+
+    $ docker exec -it svn-server svnadmin create ultrastardx
+
+    Load in the SVN dump archive (make sure your dashes and quotes aren't funky here)
+
+    $ docker exec -it svn-server sh -c "gunzip -c /tmp/ultrastardx.dump.gz | svnadmin load ultrastardx"
+
+    Check to see that repo has been loaded properly
+
+    $ svn info svn://localhost:3960/ultrastardx
+
