@@ -50,10 +50,16 @@ def getCmdOutput(String cmd) {
 }
 
 def setParam(paramName, paramValue) {
+    echo paramName
+    echo paramValue
     List<ParameterValue> newParams = new ArrayList<>()
+        echo paramName
+    echo paramValue
     newParams.add(new StringParameterValue(paramName, paramValue.toString()))
-    println newParams
-   $build().addOrReplaceAction($build().getAction(ParametersAction.class).createUpdated(newParams))
+    echo paramName "" paramValue
+    $build().addOrReplaceAction($build().getAction(ParametersAction.class).createUpdated(newParams))
+        echo paramName
+    echo paramValue
 }
 
 def defaultIfEmpty(obj, byDefault) {

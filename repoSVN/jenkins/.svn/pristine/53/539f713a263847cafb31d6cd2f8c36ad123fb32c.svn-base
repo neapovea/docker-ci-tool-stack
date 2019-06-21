@@ -18,7 +18,7 @@ def call(params, config) {
 
     def parametersList = [
       [$class: 'ListSubversionTagsParameterDefinition',
-            name: 'SVN_TAG_TO_BUILD', 
+            name: 'urlSVN', 
             tagsDir: config.urlSVN, 
             tagsFilter: utilHelper.defaultIfNull(config.tagSVN, defConfig.get("jenkins.tagSVN")),
             defaultValue: utilHelper.defaultIfNull(config.tagSVN, defConfig.get("jenkins.tagDefaultSVN")),
