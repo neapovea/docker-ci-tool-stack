@@ -1,0 +1,15 @@
+{
+  "maven": {
+    "options": "-Xmx1048m"
+  },
+  "sonar": {
+    "domain": {
+      "PRO": "calidad.sas.junta-andalucia.es",
+      "PRE": "alm-java.pre.sas.junta-andalucia.es"
+    },
+    "version": "Sonar7.7",
+    "jdk": "1.8",
+    "maven": "M3",
+    "plugin": "org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.1.1168"
+  }
+}

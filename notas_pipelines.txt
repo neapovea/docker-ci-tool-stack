@@ -1,0 +1,70 @@
+
+
+
+
+You can use the Snippet Generator for General SCM step. This displays the familiar Subversion configuration options, and takes credentials as parameter as usual.
+
+The Snippet Generator will produce a tad ugly representation of your parameter selections and looks something like this:
+
+checkout([$class: 'SubversionSCM', 
+          additionalCredentials: [], 
+          excludedCommitMessages: '', 
+          excludedRegions: '', 
+          excludedRevprop: '', 
+          excludedUsers: '', 
+          filterChangelog: false, 
+          ignoreDirPropChanges: false, 
+          includedRegions: '', 
+          locations: [[credentialsId: '34761a89-1402-47d7-96e2-aec22ffdc50b', 
+                       depthOption: 'infinity', 
+                       ignoreExternalsOption: true, 
+                       local: 'cable_branch', 
+                       remote: "https://trac.nci.org.au/svn/cable/branches/$SVN_BRANCH"]], 
+          workspaceUpdater: [$class: 'UpdateUpdater']])
+Notice that the remote section uses double quotes, so that the variable $SVN_BRANCH gets substituted correctly.
+
+
+
+
+
+I think you need a Checkout stage before before your Build stage, which consists of the SCM information. This allows the job to Poll SCM at the desired interval and run the pipeline.
+
+You can even use Pipeline script, without having the pipeline codes to store as a JenkinsFile in SCM.
+
+Below is my SVN Checkout stage pipeline code before my Build stage:
+
+stage('Checkout') {
+    checkout([$class: 'SubversionSCM', 
+        additionalCredentials: [], 
+        excludedCommitMessages: '', 
+        excludedRegions: '', 
+        excludedRevprop: '', 
+        excludedUsers: 'buildbot', 
+        filterChangelog: false, 
+        ignoreDirPropChanges: false, 
+        includedRegions: '', 
+        locations: [[credentialsId: 'b86bc2b6-994b-4811-ac98-0f35e9a9b114', 
+            depthOption: 'infinity', 
+            ignoreExternalsOption: true, 
+            local: '.', 
+            remote: "http://svn/something/trunk/"]],
+        workspaceUpdater: [$class: 'UpdateUpdater']])
+}
+Works for my pipeline job though. Hope this helps.
+
+
+
+parameters([
+    [$class: 'ListSubversionTagsParameterDefinition',
+            name: 'SVN_TAG_TO_BUILD', 
+            tagsDir: 'https://server/svn/repo/tags', 
+            credentialsId: 'jenkins', 
+            maxTags: '50', 
+            reverseByDate: true, 
+            reverseByName: false], 
+    string(
+        defaultValue: 'Running release build', 
+        description: 'Comments to leave when creating the release build tag', 
+        name: 'SVN_COMMENTS'
+    )
+])

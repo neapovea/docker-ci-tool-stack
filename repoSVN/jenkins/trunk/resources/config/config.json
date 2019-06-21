@@ -1,0 +1,18 @@
+{
+  "maven": {
+    "options": "-Xmx1048m"
+  },
+  "jenkins": {
+    "SVNLoginID": "442f033f-ccf6-4824-a03a-9b7c3e5e42dc"
+  },
+  "sonar": {
+    "domain": {
+      "PRO": "calidad.sas.junta-andalucia.es",
+      "PRE": "alm-java.pre.sas.junta-andalucia.es"
+    },
+    "version": "Sonar7.7",
+    "jdk": "1.8",
+    "maven": "M3",
+    "plugin": "org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.1.1168"
+  }
+}

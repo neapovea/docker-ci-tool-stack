@@ -55,3 +55,60 @@ Let's load a test SVN repository, located here.
 
     $ svn info svn://localhost:3960/ultrastardx
 
+sudo docker exec -it docker-ci-tool-stack_subversion_1 sh -c " /opt/csvn/bin/svnrdump dump  https://github.com/neapovea/docker-ci-tool-stack/tree/master/repoSVN/jenkins --trust-server-cert --non-interactive| gzip > /tmp/svndumpjenkins.dump.gz"
+
+docker exec -it docker-ci-tool-stack_subversion_1 sh /opt/csvn/bin/svnadmin create jenkins
+
+docker exec -it docker-ci-tool-stack_subversion_1 sh sh -c "gunzip -c /tmp/svndumpjenkins.dump.gz | /opt/csvn/bin/svnadmin load jenkins"
+
+docker exec -it docker-ci-tool-stack_subversion_1 sh /opt/csvn/bin/svn info svn://172.19.0.3:3960/jenkins
+
+
+https://github.com/neapovea/docker-ci-tool-stack/tree/master/repoSVN
+https://github.com/neapovea/docker-ci-tool-stack/tree/master/repoSVN/prueba_maven
+
+
+
+gzip -cr repoSVN/jenkins/ > jenkins.gz
+gzip -cr repoSVN/prueba_maven/ > prueba_maven.gz
+
+sudo docker cp jenkins.gz docker-ci-tool-stack_subversion_1:/home/jenkins.gz
+sudo docker cp prueba_maven.gz docker-ci-tool-stack_subversion_1:/home/prueba_maven.gz
+
+
+docker exec -it docker-ci-tool-stack_subversion_1 sh /opt/csvn/bin/svnadmin create jenkins
+
+
+docker exec -it docker-ci-tool-stack_subversion_1 sh -c "gunzip -c /home/jenkins.gz | /opt/csvn/bin/svnadmin load jenkins"
+
+docker exec -it docker-ci-tool-stack_subversion_1 sh /opt/csvn/bin/svn info svn://172.19.0.3:3960/jenkins
+
+
+
+sudo docker cp repoSVN/jenkins docker-ci-tool-stack_subversion_1:/home/
+
+sudo docker exec -it docker-ci-tool-stack_subversion_1  /opt/csvn/bin/svnadmin create repo
+sudo docker exec -it docker-ci-tool-stack_subversion_1  /opt/csvn/bin/svn mkdir /opt/csvn/bin/svn/repo/jenkins
+sudo docker exec -it docker-ci-tool-stack_subversion_1  cd repo
+sudo docker exec -it docker-ci-tool-stack_subversion_1  /opt/csvn/bin/svn checkout repo/jenkins /home/jenkins"
+sudo docker exec -it docker-ci-tool-stack_subversion_1  /opt/csvn/bin/svn add /home/jenkins/*
+sudo docker exec -it docker-ci-tool-stack_subversion_1  /opt/csvn/bin/svn commit /home/jenkins /path/to/codebase -m "inicio repo jenkins"
+
+
+
+
+svn mkdir <repo>/newProject
+svn checkout <repo>/newProject /path/to/codebase
+svn add /path/to/codebase/*
+svn commit /path/to/codebase -m "adding initial codebase"
+
+
+svnadmin create /path/to/<repository_name>
+
+
+sudo docker exec -it docker-ci-tool-stack_subversion_1  /opt/csvn/bin/svn mkdir --username admin --password admin  http://localhost:18080/svn/jenkins -m "Creating jenkins"
+
+
+sudo docker exec -it docker-ci-tool-stack_subversion_1  /opt/csvn/bin/svn mkdir /opt/csvn/repo/jenkins
+
+svn checkout --username admin --password admin  http://localhost:18080/svn/jenkins /home/alx/Documentos/DockerCI/docker-ci-tool-stack/repoSVN/jenkins
