@@ -13,16 +13,27 @@ def call(params, config) {
 
     config.SONAR = "SI"
     config.DEBUG = "NO"
+    //Parametros para todos los tipos
+
+
+// parameterized build settings (with parameter type of "list subversion tags"): 
+// Name: branch 
+// Repository URL: svn://vcs.local/main/projectA 
+// Tags filter: trunk|(tags|branches)/.* 
+// Default value: trunk 
 
     echo "Cargando configuracion del JOB especifica para proyectos " + config.type
 
+
+    def credentialsId = defConfig.get("jenkins.SVNLoginID")
+    
     def parametersList = [
       [$class: 'ListSubversionTagsParameterDefinition',
             name: 'SVN_TAG_TO_BUILD', 
             tagsDir: config.urlSVN, 
-            tagsFilter: utilHelper.defaultIfNull(config.tagSVN, defConfig.get("jenkins.tagSVN")),
-            defaultValue: utilHelper.defaultIfNull(config.tagSVN, defConfig.get("jenkins.tagDefaultSVN")),
-            credentialsId: defConfig.get("jenkins.SVNLoginID"), 
+            tagsFilter: config.tagSVN,
+            defaultValue: config.tagSVN,
+            credentialsId: credentialsId, 
             maxTags: '50', 
             reverseByDate: true, 
             reverseByName: false]   
@@ -76,7 +87,7 @@ def call(params, config) {
     println " "
     properties(propertiesList)
 
-    //Comprobacion de parametros comunes
+    // //Comprobacion de parametros comunes
     // if (!config.DEPLOY_BINARIES ||
     //         !config.REF) {
     //     error "Faltan parametros, puede ser debido a una actualizacion del Job, por favor ejecute de nuevo el Job."
@@ -85,8 +96,6 @@ def call(params, config) {
     if (!config.SONAR ) {
                 error "Faltan parametros, puede ser debido a una actualizacion del Job, por favor ejecute de nuevo el Job."
             }
-    echo "falta carga parametors"
     config.each { k, v -> utilHelper.setParam(k, v) 
       }
-    echo "fin carga parametors"
 }
