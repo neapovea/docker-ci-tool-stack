@@ -61,6 +61,20 @@
   <primaryView>All</primaryView>
   <slaveAgentPort>50000</slaveAgentPort>
   <label></label>
-  <nodeProperties/>
+  <nodeProperties>
+    <hudson.slaves.EnvironmentVariablesNodeProperty>
+      <envVars serialization="custom">
+        <unserializable-parents/>
+        <tree-map>
+          <default>
+            <comparator class="hudson.util.CaseInsensitiveComparator"/>
+          </default>
+          <int>1</int>
+          <string>ENTORNO</string>
+          <string>PRO</string>
+        </tree-map>
+      </envVars>
+    </hudson.slaves.EnvironmentVariablesNodeProperty>
+  </nodeProperties>
   <globalNodeProperties/>
 </hudson>

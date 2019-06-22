@@ -52,9 +52,11 @@ def call(params, config) {
                           disableConcurrentBuilds(),
                           parameters(parametersList)]
 
-    //pasa la información del tag seleccionado a la variable por defecto pasa la que este establecida pro defecto
-    config.SVN_TAG = utilHelper.defaultIfEmpty(env.SVN_TAG_TO_BUILD, defConfig.get("jenkins.tagDefaultSVN"))
-
+    echo config.SVN_TAG_TO_BUILD
+    echo env.SVN_TAG_TO_BUILD
+    echo env.SVN_TAG
+    echo env.BUILD_TAG
+    config.SVN_TAG = env.SVN_TAG_TO_BUILD
     println " "
     println "CONFIGURACION DE LA EJECUCION: "
     println prettyPrint(toJson(config))

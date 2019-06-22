@@ -1,0 +1,21 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<org.jenkinsci.plugins.workflow.libs.GlobalLibraries plugin="workflow-cps-global-lib@2.13">
+  <libraries>
+    <org.jenkinsci.plugins.workflow.libs.LibraryConfiguration>
+      <name>utilSharedLib</name>
+      <retriever class="org.jenkinsci.plugins.workflow.libs.SCMSourceRetriever">
+        <scm class="jenkins.scm.impl.subversion.SubversionSCMSource" plugin="subversion@2.12.1">
+          <id>1364bbd6-2a9d-402a-95a5-2d48af5f881b</id>
+          <remoteBase>http://172.19.0.3:18080/svn/jenkins/</remoteBase>
+          <credentialsId>svnCredentialID</credentialsId>
+          <includes>*,trunk,branches/*,tags/*,sandbox/*</includes>
+          <excludes></excludes>
+        </scm>
+      </retriever>
+      <defaultVersion>trunk</defaultVersion>
+      <implicit>true</implicit>
+      <allowVersionOverride>true</allowVersionOverride>
+      <includeInChangesets>true</includeInChangesets>
+    </org.jenkinsci.plugins.workflow.libs.LibraryConfiguration>
+  </libraries>
+</org.jenkinsci.plugins.workflow.libs.GlobalLibraries>

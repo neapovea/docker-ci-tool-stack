@@ -53,7 +53,7 @@ def call(params, config) {
                           parameters(parametersList)]
 
     //pasa la información del tag seleccionado a la variable por defecto pasa la que este establecida pro defecto
-    config.SVN_TAG = utilHelper.defaultIfEmpty(env.SVN_TAG_TO_BUILD, defConfig.get("jenkins.tagDefaultSVN"))
+    config.SVN_TAG = utilHelper.defaultIfNull(env.SVN_TAG_TO_BUILD, defConfig.get("jenkins.tagDefaultSVN"))
 
     println " "
     println "CONFIGURACION DE LA EJECUCION: "
