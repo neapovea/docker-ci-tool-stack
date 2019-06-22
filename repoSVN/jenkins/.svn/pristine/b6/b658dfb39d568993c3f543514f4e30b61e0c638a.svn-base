@@ -54,7 +54,6 @@ def call(params, config) {
 
     echo config.SVN_TAG_TO_BUILD
     echo env.SVN_TAG
-    echo env.BUILD_TAG
     config.SVN_TAG = env.SVN_TAG
     println " "
     println "CONFIGURACION DE LA EJECUCION: "
