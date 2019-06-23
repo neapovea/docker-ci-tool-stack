@@ -60,12 +60,12 @@ def call(params, config) {
 
     //pasa la información del tag seleccionado a la variable por defecto pasa la que este establecida pro defecto
     config.SVN_TAG = utilHelper.defaultIfEmpty(env.SVN_TAG_TO_BUILD, defConfig.get("jenkins.tagDefaultSVN"))
-    if (substring(config.SVN_BUILD_URL.length() - 1) == "/"){
+    // if (substring(config.urlSVN.length() - 1) == "/"){
       config.SVN_BUILD_URL = config.urlSVN  + config.SVN_TAG
-    }
-    else {
-      config.SVN_BUILD_URL = config.urlSVN  + "/" + config.SVN_TAG
-    }
+    // }
+    // else {
+    //   config.SVN_BUILD_URL = config.urlSVN  + "/" + config.SVN_TAG
+    // }
     
 
 

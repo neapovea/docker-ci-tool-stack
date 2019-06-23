@@ -43,7 +43,6 @@ pipeline {
                     //Comprobar que el Job contiene los parametros necesarios
                     utilJobParams(params, config)
                     try {
-
                         //mensaje de trabajo lanzada
                         utilHelper.retry({
                             echo env.BUILD_URL
@@ -59,11 +58,11 @@ pipeline {
         }
 
         //descarga de codigo fuente al workspace
-        // stage('Checkout') {
-        //     steps {
-        //         utilCheckout(config)
-        //     }
-        // }
+        stage('Checkout') {
+            steps {
+                utilCheckout(config)
+            }
+        }
 
         // stage('Build') {
         //     steps {
