@@ -14,7 +14,7 @@ def call(config) {
                         findbugsPublisher(disabled: true),
                         openTasksPublisher(disabled: true)]) {
 
-            bat('mvn -f ' + filePath + ' ' + ' org.jacoco:jacoco-maven-plugin:prepare-agent test -Dmaven.javadoc.skip=true -fae -Dmaven.test.failure.ignore=false')
+            sh('mvn -f ' + filePath + ' ' + ' org.jacoco:jacoco-maven-plugin:prepare-agent test -Dmaven.javadoc.skip=true -fae -Dmaven.test.failure.ignore=false')
         }
     } catch (err) {
         echo 'Testing failed!'

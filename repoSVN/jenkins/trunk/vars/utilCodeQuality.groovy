@@ -52,7 +52,7 @@ def call(config) {
  */
 def setLeakPeriod(leakPeriod, key) {
     withCredentials([string(credentialsId: defConfig.get("jenkins.SonarTokenID"), variable: 'token')]) {
-        bat("curl -u " + token + ": -X POST \"http://" + utilConfig.get("sonar.domain") + "/sonarqube/api/properties?id=sonar.leak.period&value=" + leakPeriod + "&resource=" + key + "\"")
+        sh("curl -u " + token + ": -X POST \"http://" + utilConfig.get("sonar.domain") + "/sonarqube/api/properties?id=sonar.leak.period&value=" + leakPeriod + "&resource=" + key + "\"")
     }
 }
 
@@ -65,7 +65,7 @@ def sonarMaven(codeQuality, build, version, projectDate, addparameters) {
                 maven: utilConfig.get("sonar.maven"),
                 mavenOpts: utilHelper.defaultIfNull(codeQuality?.mavenOpts, utilHelper.defaultIfNull(build?.mavenOpts, utilConfig.get("maven.options")))
         ) {
-            bat('mvn -f ' + filePath + ' ' + utilConfig.get("sonar.plugin") + ':sonar ' + projectDate +
+            sh('mvn -f ' + filePath + ' ' + utilConfig.get("sonar.plugin") + ':sonar ' + projectDate +
                     ' -Dsonar.projectVersion=' + version +
                     ' ' + parameters)
         }

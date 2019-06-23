@@ -18,6 +18,6 @@ def BuildMaven(build, profile, debug) {
         def profileStr = utilHelper.getProfileString(build, profile)
         def debugStr = ''
         if (debug) debugStr = ' -X '
-        bat('mvn -f ' + filePath + ' ' + profileStr + ' -DskipTests -Dcobertura.skip -Dmaven.javadoc.skip=true clean install' + debugStr)
+        sh('mvn -f ' + filePath + ' ' + profileStr + ' -DskipTests -Dcobertura.skip -Dmaven.javadoc.skip=true clean install' + debugStr)
     }
 }
