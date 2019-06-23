@@ -2,70 +2,67 @@ def GlobalConfig
 pipeline {
     agent any
 
+    //envio de mensajes según la finalización del proceso
     post {
         success {
             echo "SUCCESS"
-            // mail(to:"alejandro.maillard@getronics.com",
-            //         subject: "[${env.ENTORNO}] Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) ejecutado",
-            //         body: "El Job ha finalizado: ${env.BUILD_URL}. Referencia: ${config?.REF}\n  Sonar: ${env.SONARURL}")
+            mail(to:"alejandro.maillard@getronics.com",
+                    subject: "[${env.ENTORNO}] Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) ejecutado",
+                    body: "El Job ha finalizado: ${env.BUILD_URL}. Referencia: ${config?.urlSVN}${config?.SNV_TAG}\n  Sonar: ${env.SONARURL}")
         }
         failure {
             echo "FAILURE"
-            // mail(to:"alejandro.maillard@getronics.com",
-            //         subject: "[${env.ENTORNO}] Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) ejecutado con errores",
-            //         body: "El Job ha finalizado con errores: ${env.BUILD_URL}. Referencia: ${config?.REF}\n ")
+            mail(to:"alejandro.maillard@getronics.com",
+                    subject: "[${env.ENTORNO}] Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) ejecutado con errores",
+                    body: "El Job ha finalizado con errores: ${env.BUILD_URL}. Referencia: ${config?.urlSVN}${config?.SNV_TAG}\n ")
         }
         unstable {
             echo "UNSTABLE"
-            // mail(to:"alejandro.maillard@getronics.com",
-            //         subject: "[${env.ENTORNO}] Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) inestable",
-            //         body: "El Job ha finalizado: ${env.BUILD_URL}. Referencia: ${config?.REF}\n  Sonar: ${env.SONARURL}")
+            mail(to:"alejandro.maillard@getronics.com",
+                    subject: "[${env.ENTORNO}] Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) inestable",
+                    body: "El Job ha finalizado: ${env.BUILD_URL}. Referencia: ${config?.urlSVN}${config?.SNV_TAG}\n  Sonar: ${env.SONARURL}")
         }
     }
 
+
+    //fases del proceso 
     stages {
+        //fase de validación de configuración
         stage('Validate Config') {
             steps {
                 script {
                     try {
-                        echo "Configuracion cargada"
                         //Lectura del fichero de configuracion, asociado por nombre de la tarea
-                        echo env.JOB_NAME
                         config = utilConfig(env.JOB_NAME)
-                        echo "Configuracion cargada"
+                        echo "Configuracion de la tarea cargada"
                     } catch (Exception e) {
                         echo e.toString()
                         throw e
                     }
 
-
                     //Comprobar que el Job contiene los parametros necesarios
                     utilJobParams(params, config)
                     try {
 
-                        echo "MENSAJE DATOS TAREA JENKINS " 
-                        echo env.ENTORNO 
-                        echo env.BUILD_NUMBER 
-                        echo env.BUILD_URL
-                        // utilHelper.retry({
-                        //     mail(to: "alejandro.maillard@getronics.com",
-                        //             subject: "[${env.ENTORNO}] Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) iniciado",
-                        //             body: "El Job se ha iniciado: ${env.BUILD_URL}. ")
-                        // })
+                        //mensaje de trabajo lanzada
+                        utilHelper.retry({
+                            mail(to: "alejandro.maillard@getronics.com",
+                                    subject: "[${env.ENTORNO}] Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) iniciado",
+                                    body: "El Job se ha iniciado: ${env.BUILD_URL}. ")
+                        })
                     } catch (Exception e) {
                         echo e.toString()
                     }
                 }
             }
         }
-
-        // stage('Checkout') {
-        //     steps {
-
-        //         utilCheckout(config)
-
-        //     }
-        // }
+        
+        //descarga de codigo fuente al workspace
+        stage('Checkout') {
+            steps {
+                utilCheckout(config)
+            }
+        }
 
         // stage('Build') {
         //     steps {

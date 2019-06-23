@@ -1,8 +1,8 @@
 def get(key) {
 
     if (!Globals.GlobalConfig) {
-        echo("Cargando configuración por defecto")
-        Globals.GlobalConfig = readJSON text: libraryResource("config/config.json")
+        Globals.GlobalConfig = readJSON text: libraryResource("configuraciones/config.json")
+        echo("Carganda configuración por defecto del entorno.")
     }
 
     value = getStringKey(key)

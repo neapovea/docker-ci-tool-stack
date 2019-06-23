@@ -1,27 +1,31 @@
 import static groovy.json.JsonOutput.*
 
 /**
- * Comprueba que un Job contiene los parametros necesarios
- * @param params parametros del job
- * @param config configuracion del job
- * @return
+ * Comprueba que la tarea tiene los parámetros que necesita.
+ * @param params parametros de la tarea
+ * @param config configuracion de la tarea
  */
+
 def call(params, config) {
-    echo "Comprobando parametros del Job"
+    echo "Validar parámetros de la Tarea"
     def profiles = config?.stage?.build?.profiles
     config << params
 
     config.SONAR = "SI"
     config.DEBUG = "NO"
 
-    echo "Cargando configuracion del JOB especifica para proyectos " + config.type
+    echo "Cargando configuracion de la tarea "
 
+
+    //carga parámetro de lista de versiones del respositorio SVN. la seleccioar se guarda en la variable env.SVN_TAG_TO_BUILD
     def parametersList = [
       [$class: 'ListSubversionTagsParameterDefinition',
             name: 'SVN_TAG_TO_BUILD', 
             tagsDir: config.urlSVN, 
+            //carga filtro de ramas y rama por defecto indicado en la configuración especifica de la tarea si es nulo carga el que se indico por defecto
             tagsFilter: utilHelper.defaultIfNull(config.tagSVN, defConfig.get("jenkins.tagSVN")),
             defaultValue: utilHelper.defaultIfNull(config.tagSVN, defConfig.get("jenkins.tagDefaultSVN")),
+            //cargar credencial indicado en el fichero de configuración global.
             credentialsId: defConfig.get("jenkins.SVNLoginID"), 
             maxTags: '50', 
             reverseByDate: true, 
@@ -29,12 +33,12 @@ def call(params, config) {
         choice(choices: 'NO\nSI', description: '', name: 'DEPLOY_BINARIES')
     ]
 
-    
-    //parametros especificos de los tipos MAVEN 
+    //carga de más parámetros
     parametersList.add(choice(choices: 'SI\nNO', description: 'Especifica si se ejecutara Sonar o no', name: 'SONAR'))
     parametersList.add(choice(choices: 'NO\nSI', description: 'Especifica si se eliminara el WS completamente antes de empezar la tarea', name: 'CLEAN_WS'))
     parametersList.add(string(defaultValue: '', description: 'Fecha que establecera Sonar como fecha de Analisis. FORMATO yyyy-MM-dd', name: 'PROJECT_DATE'))
     parametersList.add(string(defaultValue: '', description: 'Version que establecera Sonar como version con la que comparar.', name: 'LEAK_PERIOD'))
+    //cargar parámetros de forma condicional solo si están indicado en la configuración de la tarea.
     if (config?.stage?.deploy?.artifactory == 'SI') {
         parametersList.add(choice(choices: 'NO\nSI', description: '', name: 'DEPLOY_LIBRARY'))
     }
@@ -44,34 +48,32 @@ def call(params, config) {
     if (config?.stage?.deploy?.pro) {
         parametersList.add(choice(choices: 'NO\nSI', description: '', name: 'DEPLOY_PRO'))
     }
+
     if (config.type == "MAVEN") {
         parametersList.add(choice(choices: 'NO\nSI', description: 'Especifica si se ejecutara maven en modo debug o no', name: 'DEBUG'))
     }
 
+    //carga datos propiedades para la tarea
     def propertiesList = [buildDiscarder(logRotator(artifactDaysToKeepStr: '20', artifactNumToKeepStr: '6', daysToKeepStr: '', numToKeepStr: '')),
                           disableConcurrentBuilds(),
                           parameters(parametersList)]
 
     //pasa la información del tag seleccionado a la variable por defecto pasa la que este establecida pro defecto
     config.SVN_TAG = utilHelper.defaultIfEmpty(env.SVN_TAG_TO_BUILD, defConfig.get("jenkins.tagDefaultSVN"))
+    config.SVN_BUILD_URL = config.urlSVN + "/" + config.SVN_TAG
 
-    println " "
-    println "CONFIGURACION DE LA EJECUCION: "
+
+    //muestra por el log de consola la configuración de la tarea para su ejecución.
+    println "Datos de la tarea para su ejecución: "
     println prettyPrint(toJson(config))
     println " "
     properties(propertiesList)
 
-    //Comprobacion de parametros comunes
-    // if (!config.DEPLOY_BINARIES ||
-    //         !config.REF) {
-    //     error "Faltan parametros, puede ser debido a una actualizacion del Job, por favor ejecute de nuevo el Job."
-    // }
-    //Comprobacion de parametros especificos
+    //Comprobacion de parámetros
     if (!config.SONAR ) {
                 error "Faltan parametros, puede ser debido a una actualizacion del Job, por favor ejecute de nuevo el Job."
             }
-    echo "falta carga parametors"
     config.each { k, v -> utilHelper.setParam(k, v) 
       }
-    echo "fin carga parametors"
+    echo "Fin de la carga parametors"
 }

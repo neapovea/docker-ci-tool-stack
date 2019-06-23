@@ -1,9 +1,10 @@
 def call(config) {
+	config.PROJECT_VERSION = config.SVN_TAG
     //Descarga del repositorio
     if (config?.stage?.checkout?.cleanWS=="SI") {
         cleanWs()
     }
-    checkout([$class: 'SubversionSCM', locations: [[credentialsId: '11bed131-793e-485d-8bea-886ab3c52c0e', local: '.', remote: 'http://localhost:18080/svn/pruebamaven/']]])
+    checkout([$class: 'SubversionSCM', locations: [[credentialsId: defConfig.get("jenkins.SVNLoginID"), local: '.', remote: config.SVN_BUILD_URL]]])
 
     //Carga informacion adicional desde el fichero descriptor del proyecto
     pom = readMavenPom(file: utilHelper.defaultIfNull(config?.stage?.build?.filePath, 'pom.xml'))

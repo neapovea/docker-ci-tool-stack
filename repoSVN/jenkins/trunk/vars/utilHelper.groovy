@@ -50,10 +50,11 @@ def getCmdOutput(String cmd) {
 }
 
 def setParam(paramName, paramValue) {
+    //asigna parámetros a la tarea.
     List<ParameterValue> newParams = new ArrayList<>()
     newParams.add(new StringParameterValue(paramName, paramValue.toString()))
-    println newParams
-   $build().addOrReplaceAction($build().getAction(ParametersAction.class).createUpdated(newParams))
+    //println newParams
+    $build().addOrReplaceAction($build().getAction(ParametersAction.class).createUpdated(newParams))
 }
 
 def defaultIfEmpty(obj, byDefault) {
@@ -66,6 +67,8 @@ def defaultIfNull(obj, byDefault) {
     if (obj == null) return byDefault
     return obj
 }
+
+
 /**
  * extra la lista de versiones de git y llama a {@previousVersion} con la lista
  * @param version
