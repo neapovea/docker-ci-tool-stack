@@ -64,23 +64,29 @@ pipeline {
             }
         }
 
-        // stage('Build') {
-        //     steps {
-        //          utilBuild(config)
-        //     }
-        // }
-        // stage('Testing') {
-        //     steps {
-        //         utilTest(config)
-        //     }
+        stage('Build') {
+            steps {
+                 utilBuild(config)
+            }
+        }
 
-        // }
-        // stage('Code Quality') {
-        //     when {
-        //         expression { config.SONAR == 'SI' }
-        //     }
+        stage('Testing') {
+            steps {
+                utilTest(config)
+            }
+        }
+
+        stage('Code Quality') {
+            when {
+                expression { config.SONAR == 'SI' }
+            }
+            steps {
+                sasCodeQuality(config)
+            }
+        }
+        // stage('Deploy') {
         //     steps {
-        //         utilCodeQuality(config)
+        //         sasDeploy(config)
         //     }
         // }
 

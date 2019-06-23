@@ -4,13 +4,14 @@
   },
   "jenkins": {
     "SVNLoginID": "svnCredentialID",
+    "SonarTokenID": "sonarCredentialID",
     "tagSVN": "trunk|tags/.*",
     "tagDefaultSVN": "trunk"
   },
   "sonar": {
     "domain": {
-      "PRO": "calidad.sas.junta-andalucia.es",
-      "PRE": "alm-java.pre.sas.junta-andalucia.es"
+      "PRO": "pro.sonar.cjl.junta-andalucia.es",
+      "PRE": "pre.sonar.cjl.junta-andalucia.es"
     },
     "version": "Sonar7.7",
     "jdk": "1.8",

@@ -60,25 +60,33 @@ def call(params, config) {
 
     //pasa la información del tag seleccionado a la variable por defecto pasa la que este establecida pro defecto
     config.SVN_TAG = utilHelper.defaultIfEmpty(env.SVN_TAG_TO_BUILD, defConfig.get("jenkins.tagDefaultSVN"))
-    // if (substring(config.urlSVN.length() - 1) == "/"){
+
+    if (utilHelper.lastN(config.urlSVN, 1) == "/"){
       config.SVN_BUILD_URL = config.urlSVN  + config.SVN_TAG
-    // }
-    // else {
-    //   config.SVN_BUILD_URL = config.urlSVN  + "/" + config.SVN_TAG
-    // }
+    }
+    else {
+      config.SVN_BUILD_URL = config.urlSVN  + "/" + config.SVN_TAG
+    }
     
-
-
     //muestra por el log de consola la configuración de la tarea para su ejecución.
     println "Datos de la tarea para su ejecución: "
     println prettyPrint(toJson(config))
     println " "
     properties(propertiesList)
 
-    //Comprobacion de parámetros
-    if (!config.SONAR ) {
+    //Comprobacion de parámetros da error para que se lance la tarea con todos los parámetros.
+    if (!config.SVN_BUILD_URL ||
+        !config.DEPLOY_BINARIES ||
+        !config.SONAR ||
+          (!config.DEPLOY_LIBRARY && config?.stage?.deploy?.artifactory == 'SI') ||
+          (!config.DEPLOY_PRE && config?.stage?.deploy?.pre) ||
+          (!config.DEPLOY_PRO && config?.stage?.deploy?.pro) ||
+          (profiles != null && !config.PROFILE) ||
+          (config.type == "MAVEN" && !config.DEBUG)) {
                 error "Faltan parametros, puede ser debido a una actualizacion del Job, por favor ejecute de nuevo el Job."
-            }
+    }
+
+    //carga los parámetos en la tarea, agregandolos.
     config.each { k, v -> utilHelper.setParam(k, v) 
       }
     echo "Fin de la carga parametors"
