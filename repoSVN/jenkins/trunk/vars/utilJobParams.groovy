@@ -81,7 +81,7 @@ def call(params, config) {
           (!config.DEPLOY_LIBRARY && config?.stage?.deploy?.artifactory == 'SI') ||
           (!config.DEPLOY_PRE && config?.stage?.deploy?.pre) ||
           (!config.DEPLOY_PRO && config?.stage?.deploy?.pro) ||
-          (profiles != null && !config.PROFILE) ||
+          //(profiles != null && !config.PROFILE) ||
           (config.type == "MAVEN" && !config.DEBUG)) {
                 error "Faltan parametros, puede ser debido a una actualizacion del Job, por favor ejecute de nuevo el Job."
     }
